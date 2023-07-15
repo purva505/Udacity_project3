@@ -2,7 +2,7 @@ version: 2.1
 
 commands:
 
-   destroy-environment:
+  destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       workflow_id:
@@ -19,7 +19,7 @@ commands:
             aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive           
 jobs:
   build-frontend:
-    docker:
+    docker:8
       - image: circleci/node:13.8.0
     steps:
       - checkout
