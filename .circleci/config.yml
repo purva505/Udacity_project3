@@ -228,6 +228,7 @@ jobs:
           command: |
             cd backend
             npm install
+            npm audit fix
             npm run migrations > migrations_dump.txt
       - run:
           name: Sending Migration to KVDB
