@@ -215,7 +215,31 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml
       # Here's where you will add some code to rollback on failure 
       - destroy-environment
-  
+  run-migrations:
+    docker:
+      - image: circleci/node:13.8.0 # Docker image here that supports NodeJS
+    steps:
+      - checkout # Checkout code from git
+      - attach_workspace: 
+          at: ~/
+      - install_awscli
+      - run:
+          name: Run migrations
+          command: |
+            cd backend
+            npm install
+            npm run migrations > migrations_dump.txt
+      - run:
+          name: Sending Migration to KVDB
+          command: |
+            cat ~/project/backend/migrations_dump.txt
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            then
+              echo "Hello there !!!"
+              curl --insecure https://kvdb.io/WfShvZcqBSGAUrVKiup1rd/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+            fi
+      #- destroy-environment # Here's where you will add some code to rollback on failure
+
 
 workflows:
   default:
@@ -237,3 +261,5 @@ workflows:
               only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]  
+      - run-migrations:
+          requires: [configure-infrastructure]
