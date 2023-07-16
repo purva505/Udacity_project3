@@ -1,7 +1,27 @@
 version: 2.1
 
 commands:
+   install_awscli:
+    description: Installing AWS CLI v2
+    steps:
+      - run:
+          name: Installing AWS CLI v2
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
 
+  install_ansible:
+    description: Installing ansible 
+    steps:
+      - run:
+          name: Installing  Ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common -y
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible -y
+  
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -154,6 +174,40 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment # Here's where you will add some code to rollback on failure
+  
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11 # Docker image here that supports Ansible
+    steps:
+      # Checkout code from git
+      - checkout
+      # Add ssh keys with fingerprint
+      - add_ssh_keys:
+          fingerprints: ["12:05:93:e4:3a:4a:f1:85:1f:ec:d7:29:8e:9d:d7:6d:13:14:9a:6f"]
+      # attach workspace
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Installing Ansible.
+          command: |
+            apk add --update ansible
+      - run:
+          name: Installing Dependencies
+          command: |
+            # Your code here
+            apk add --update tar gzip ansible nodejs npm curl && \
+            pip install awscli
+
+      - run:
+          name: Configuring server
+          command: |
+            # Your code here
+            cd .circleci/ansible && \
+            cat inventory.txt && \
+            ansible-playbook -i inventory.txt configure-server.yaml
+      # Here's where you will add some code to rollback on failure 
+      - destroy-environment
+  
 
 workflows:
   default:
@@ -173,3 +227,5 @@ workflows:
           filters:
             branches:
               only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]  
