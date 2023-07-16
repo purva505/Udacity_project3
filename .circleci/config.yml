@@ -1,7 +1,7 @@
 version: 2.1
 
 commands:
-   install_awscli:
+  install_awscli:
     description: Installing AWS CLI v2
     steps:
       - run:
@@ -21,7 +21,15 @@ commands:
             sudo apt install software-properties-common -y
             sudo add-apt-repository --yes --update ppa:ansible/ansible
             sudo apt install ansible -y
-  
+
+  install_nodejs:
+   description: Installing  Node.js 13
+   steps:
+      - run:
+          name: Installing Node.js 13
+          command: |
+           curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+           sudo apt install -y nodejs
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
