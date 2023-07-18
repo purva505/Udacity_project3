@@ -30,6 +30,7 @@ commands:
           command: |
            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
            sudo apt install -y nodejs
+
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -191,7 +192,7 @@ jobs:
       - checkout
       # Add ssh keys with fingerprint
       - add_ssh_keys:
-          fingerprints: ["12:05:93:e4:3a:4a:f1:85:1f:ec:d7:29:8e:9d:d7:6d:13:14:9a:6f"]
+          fingerprints: ["fa:fb:47:4c:8f:c4:c9:ff:a7:5b:f5:de:9d:f4:ca:67:ff:4a:2a:be"]
       # attach workspace
       - attach_workspace:
           at: ~/
