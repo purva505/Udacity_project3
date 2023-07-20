@@ -28,7 +28,8 @@ commands:
       - run:
           name: Installing Node.js 13
           command: |
-           curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+           sudo apt install curl
+           curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
            sudo apt install -y nodejs
 
   destroy-environment:
