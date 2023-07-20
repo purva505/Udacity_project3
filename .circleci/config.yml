@@ -271,7 +271,6 @@ jobs:
       - image: cimg/base:stable # Docker image here that supports AWS CLI
     steps:
       - checkout # Checkout code from git
-
       - add_ssh_keys:
           fingerprints: 
           - "fa:fb:47:4c:8f:c4:c9:ff:a7:5b:f5:de:9d:f4:ca:67:ff:4a:2a:be"
