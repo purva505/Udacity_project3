@@ -28,9 +28,8 @@ commands:
       - run:
           name: Installing Node.js 13
           command: |
-           sudo apt install curl
-           curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-           sudo apt install -y nodejs
+           sudo apt update
+           sudo apt install nodejs
 
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
