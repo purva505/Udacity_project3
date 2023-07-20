@@ -220,7 +220,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:14.18.1 # Docker image here that supports NodeJS
+      - image: cimg/node:14.17.4 # Docker image here that supports NodeJS
     steps:
       - checkout # Checkout code from git
       - attach_workspace: 
