@@ -217,6 +217,7 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml
       # Here's where you will add some code to rollback on failure 
       - destroy-environment
+
   run-migrations:
     docker:
       - image: circleci/node:13.8.0 # Docker image here that supports NodeJS
@@ -225,6 +226,7 @@ jobs:
       - attach_workspace: 
           at: ~/
       - install_awscli
+      - install nodejs
       - run:
           name: Run migrations
           command: |
