@@ -347,6 +347,49 @@ jobs:
         # Here's where you will add some code to rollback on failure
       - destroy-environment
       - revert-migrations
+  
+  smoke-test:
+    docker:
+      # Lightweight Docker image 
+      - image: cimg/base:stable
+    steps:
+      # Checkout code from git
+      - checkout
+      - install_awscli
+      - install_nodejs
+
+
+      - run:
+          name: Performing Backend Smoke Test
+          command: |
+           export BAKNDIP=$(aws ec2 describe-instances \
+             --filters Name=tag:Name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+             --query 'Reservations[*].Instances[*].PublicIpAddress' \
+             --output text)
+           export URL="http://${BAKNDIP}:3030"
+           echo ${URL}
+           curl -v -s $URL/api/status 
+           if curl -s $URL/api/status | grep "ok"
+           then
+            exit 0
+           else
+            exit 1
+           fi
+      - run: 
+          name: Performing Frontend Smoke Test
+          command: |
+            # your code here
+            WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com/#/employees
+            if curl -s $WEBSITE | grep "Welcome"
+            then
+              exit 1
+            else
+              exit 1
+            fi
+      # Here's where you will add some code to rollback on failure  
+      - destroy-environment
+      - revert-migrations
+  
 
 workflows:
   default:
@@ -374,3 +417,5 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
