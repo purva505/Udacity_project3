@@ -308,6 +308,45 @@ jobs:
      # Here's where you will add some code to rollback on failure
       - destroy-environment
       - revert-migrations
+  
+  deploy-backend:
+    docker: # Docker image here that supports Ansible
+      - image: cimg/base:stable
+    steps:
+      - checkout # Checkout code from git
+      - add_ssh_keys:
+          fingerprints: # Add ssh keys with fingerprint
+            - "fa:fb:47:4c:8f:c4:c9:ff:a7:5b:f5:de:9d:f4:ca:67:ff:4a:2a:be"
+      - attach_workspace: # attach workspace
+         at: ~/
+      - install_awscli
+      - install_ansible
+      - install_nodejs
+      - run:
+          name: Installing npm dependencies 
+          command: |
+            cd backend
+            npm install
+
+      - run:
+          name: Deploying backend
+          command: |
+            cd backend
+            npm run build
+            cd ..
+            cd .circleci/ansible/
+            mkdir files
+            cd files
+            tar -C ../../../backend -czvf artifact.tar.gz .
+            cd ../
+            pwd
+            ls -larth
+            echo "-------INVENTORY -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+        # Here's where you will add some code to rollback on failure
+      - destroy-environment
+      - revert-migrations
 
 workflows:
   default:
@@ -332,4 +371,6 @@ workflows:
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
           requires: [run-migrations]
