@@ -368,6 +368,7 @@ jobs:
              --output text)
            export URL="http://${BAKNDIP}:3030"
            echo ${URL}
+           echo ${BAKNDIP}
            curl -v -s $URL/api/status 
            if curl -s $URL/api/status | grep "ok"
            then
