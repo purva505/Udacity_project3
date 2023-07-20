@@ -220,23 +220,17 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0 # Docker image here that supports NodeJS
+      - image: circleci/node:14.18.1 # Docker image here that supports NodeJS
     steps:
       - checkout # Checkout code from git
       - attach_workspace: 
           at: ~/
       - install_awscli
-     
+      - install_nodejs
       - run:
           name: Run migrations
           command: |
             cd backend
-            npm install
-            npm audit fix --audit-level=critical --force
-            npm audit fix --force
-            npm audit --audit-level=critical
-            npm audit fix
-            npm run build 
             npm run migrations > migrations_dump.txt
       - run:
           name: Sending Migration to KVDB
@@ -245,7 +239,7 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               echo "Hello there !!!"
-              curl --insecure https://kvdb.io/WfShvZcqBSGAUrVKiup1rd/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       #- destroy-environment # Here's where you will add some code to rollback on failure
 
