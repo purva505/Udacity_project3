@@ -360,29 +360,28 @@ jobs:
 
 
       - run:
-          name: Performing Backend Smoke Test
+          name: Backend smoke test.
           command: |
-           export BAKNDIP=$(aws ec2 describe-instances \
-             --filters Name=tag:Name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+           export BACKEND_IP=$(aws ec2 describe-instances \
+             --filters Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7} \
              --query 'Reservations[*].Instances[*].PublicIpAddress' \
              --output text)
-           export URL="http://${BAKNDIP}:3030"
-           echo ${URL}
-           curl -v -s $URL/api/status 
-           if curl -s $URL/api/status | grep "ok"
+           export API_URL="http://${BACKEND_IP}:3030"
+           echo ${API_URL}
+           if curl -s $API_URL/api/status | grep "ok"
            then
             exit 0
            else
             exit 1
            fi
-      - run: 
-          name: Performing Frontend Smoke Test
+      - run:
+          name: Frontend smoke test.
           command: |
             # your code here
-            WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com/#/employees
-            if curl -s $WEBSITE | grep "Welcome"
+            FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com/#/employees
+            if curl -s $FRONTEND_WEBSITE | grep "Welcome"
             then
-              exit 1
+              exit 0
             else
               exit 1
             fi
