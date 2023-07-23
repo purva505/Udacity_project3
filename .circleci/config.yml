@@ -202,8 +202,9 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --output text)
+            echo $BACKEND_IP
             echo $BACKEND_IP >> ~/project/.circleci/ansible/inventory.txt
-            echo "[web]" >> ~/project/.circleci/ansible/inventory.txt
+            #echo "[web]" >> ~/project/.circleci/ansible/inventory.txt
             cat ~/project/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
@@ -391,8 +392,8 @@ jobs:
               exit 1
             fi
       # Here's where you will add some code to rollback on failure  
-      #- destroy-environment
-      #- revert-migrations
+      - destroy-environment
+      - revert-migrations
   
 
 workflows:
