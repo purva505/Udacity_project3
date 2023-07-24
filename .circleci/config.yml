@@ -320,13 +320,10 @@ jobs:
       - install_ansible
       - install_nodejs
 
-
       - run:
-          name: Install npm dependencies
+          name: Install dependencies
           command: |
-            cd backend
-            npm install
-
+            apk add --update --no-cache sudo curl gzip tar npm 
       - run:
           name: Deploy backend
           command: |
