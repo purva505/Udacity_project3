@@ -324,8 +324,8 @@ jobs:
           name: Installing npm dependencies 
           command: |
             cd backend
-            sudo apt-get update
-            sudo apt-get install npm
+            sudo apt-get update -y
+            sudo apt-get install -y npm
             
 
       - run:
@@ -345,8 +345,8 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
         # Here's where you will add some code to rollback on failure
-      #- destroy-environment
-      #- revert-migrations
+      - destroy-environment
+      - revert-migrations
   
 
 workflows:
