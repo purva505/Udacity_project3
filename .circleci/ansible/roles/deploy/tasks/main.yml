@@ -12,7 +12,8 @@
 - name: "Installing Node Dependencies"
   shell: |
     cd ~/backend-app
-    sudo apt-get install npm
+    sudo apt-get update -y
+    sudo apt-get install -y npm
 
 - name: "Executing Node app with PM2"
   shell: |
