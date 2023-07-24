@@ -166,9 +166,9 @@ jobs:
   
   deploy-infrastructure:
     docker:
-      - image: amazon/aws-cli # Docker image here that supports AWS CLI
-    steps: 
-      - checkout # Checkout code from git
+      - image: amazon/aws-cli
+    steps:
+      - checkout
       - run:
           name: Install tar and gzip
           command: |
@@ -176,40 +176,36 @@ jobs:
             yum -y install gzip
       - run:
           name: Ensure back-end infrastructure exists
-          command: | 
+          command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
+              --tags project=udapeople \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              --tags project=udapeople
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               
       - run:
           name: Ensure front-end infrastructure exist
           command: |
-             aws cloudformation deploy \
+            aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
+              --tags project=udapeople \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              --tags project=udapeople
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
       - run:
-          name: Add back-end ip to ansible inventory
+          name: Fetch public IP and append in inventory file
           command: |
-            cd .circleci/ansible
-            cat inventory.txt
-            BACKEND_IP=$(aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --output text)
-            echo $BACKEND_IP
-            echo $BACKEND_IP >> ~/project/.circleci/ansible/inventory.txt
-            #echo "[web]" >> ~/project/.circleci/ansible/inventory.txt
-            cat ~/project/.circleci/ansible/inventory.txt
+            public_IP_backend=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            echo $public_IP_backend >> .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      #- destroy-environment # Here's where you will add some code to rollback on failure
-  
+      - destroy-environment
+      
 workflows:
   default:
     jobs:
