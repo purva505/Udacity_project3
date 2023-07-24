@@ -324,7 +324,9 @@ jobs:
           name: Installing npm dependencies 
           command: |
             cd backend
-            npm install
+            sudo apt-get update
+            sudo apt-get install npm
+            
 
       - run:
           name: Deploying backend
