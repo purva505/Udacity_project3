@@ -305,6 +305,44 @@ jobs:
            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
      - destroy-environment
      - revert-migrations
+  deploy-backend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: 
+            - "fa:fb:47:4c:8f:c4:c9:ff:a7:5b:f5:de:9d:f4:ca:67:ff:4a:2a:be"
+      - attach_workspace:
+         at: ~/
+      - install_awscli
+      - install_ansible
+      - install_nodejs
+
+
+      - run:
+          name: Install npm dependencies
+          command: |
+            cd backend
+            npm install
+
+      - run:
+          name: Deploy backend
+          command: |
+            cd backend
+            npm run build
+            cd ..
+            cd .circleci/ansible
+            mkdir files
+            cd files
+            tar -C ../../../backend -czvf artifact.tar.gz .
+            cd ../
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+
+      - destroy-environment
+      - revert-migrations
 
 workflows:
   default:
@@ -329,4 +367,6 @@ workflows:
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
           requires: [run-migrations]
