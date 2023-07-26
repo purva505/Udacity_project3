@@ -331,7 +331,21 @@ jobs:
           command: |
             cd backend
             npm run build
+            echo ENVIROMENT=production > dist/.env
+            echo TYPEORM_CONNECTION=postgres >> dist/.env
+            echo TYPEORM_MIGRATIONS_DIR=./migrations >> dist/.env
+            echo TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js} >> dist/.env
+            echo TYPEORM_MIGRATIONS=./migrations/*{.ts,.js} >> dist/.env
+            echo TYPEORM_HOST=$TYPEORM_HOST >> dist/.env
+            echo TYPEORM_PORT=$TYPEORM_PORT >> dist/.env
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> dist/.env
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> dist/.env
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> dist/.env
+          
             cd ..
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
             cd .circleci/ansible/
             mkdir files
             cd files
