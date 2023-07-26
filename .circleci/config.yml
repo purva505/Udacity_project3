@@ -60,7 +60,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS=$(curl --insecure  https://kvdb.io/WfShvZcqBSGAUrVKiup1rd/migration_$\{CIRCLE_WORKFLOW_ID:0:7})
+            SUCCESS=$(curl --insecure  https://kvdb.io/3HjejTrqhFffpsF8QCN8Ji/migration_$\{CIRCLE_WORKFLOW_ID:0:7})
             # Logic for reverting the database state
             echo $SUCCESS
             if [[ $SUCCESS == 1 ]];
