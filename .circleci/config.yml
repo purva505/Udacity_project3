@@ -23,13 +23,13 @@ commands:
             sudo apt install ansible -y
 
   install_nodejs:
-   description: Installing  Node.js 13
+   description: Installing  Node.js 18
    steps:
       - run:
-          name: Installing Node.js 13
+          name: Installing Node.js 18
           command: |
             sudo apt-get update
-            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
             sudo apt-get install -y nodejs
 
   destroy-environment:
