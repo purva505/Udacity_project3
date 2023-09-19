@@ -1,1 +1,1 @@
-http://udapeople-80cea3b.s3-website-us-east-1.amazonaws.com
+http://udapeople-c50e59b.s3-website-us-east-1.amazonaws.com
